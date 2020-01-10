@@ -1,6 +1,6 @@
 Name:           perl-LDAP
 Version:        0.40
-Release:        2%{?dist}
+Release:        3%{?dist}
 Epoch:          1
 Summary:        LDAP Perl module
 
@@ -17,6 +17,8 @@ Patch1:         perl-ldap-0.40-LDAP.pm-set-SSL_cipher_list-to-correct-value.patc
 # Pass actual length to syswrite() instead of default 1500 B, bug #1104069,
 # CPAN RT#96203, in upstream 0.64
 Patch2:         perl-ldap-0.40-RT-96203-LDAP.pm-use-correct-length-for-syswrite.patch
+# Correct misspellings in the documentation, bug #1286228, CPAN RT#118254
+Patch3:         perl-ldap-0.40-Correct-misspellings.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildArch:      noarch
@@ -43,6 +45,7 @@ maintenance functions such as adding, deleting or modifying entries.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 chmod -c 644 bin/* contrib/* lib/Net/LDAP/DSML.pm
 %{__perl} -pi -e 's|^#!/usr/local/bin/perl\b|#!%{__perl}|' contrib/*
 
@@ -85,6 +88,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Tue Oct 04 2016 Petr Pisar <ppisar@redhat.com> - 1:0.40-3
+- Correct misspellings in the documentation (bug #1286228)
+
 * Thu Nov 19 2015 Petr Pisar <ppisar@redhat.com> - 1:0.40-2
 - Do not set SSL ciphers at all by default (bug #1090966)
 - Pass actual length to syswrite() instead of default 1500 B (bug #1104069)
