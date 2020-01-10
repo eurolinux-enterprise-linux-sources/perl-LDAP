@@ -1,6 +1,6 @@
 Name:           perl-LDAP
 Version:        0.40
-Release:        1%{?dist}
+Release:        2%{?dist}
 Epoch:          1
 Summary:        LDAP Perl module
 
@@ -8,6 +8,15 @@ Group:          Development/Libraries
 License:        GPL+ or Artistic
 URL:            http://search.cpan.org/dist/perl-ldap/
 Source0:        http://www.cpan.org/authors/id/G/GB/GBARR/perl-ldap-%{version}.tar.gz
+# Do not set SSL ciphers at all by default, bug #1090966, CPAN RT#95001,
+# in upstream 0.63
+Patch0:         perl-ldap-0.40-Do-not-set-SSL_ciphers-to-ALL-by-default.patch
+# Correct Do-not-set-SSL_ciphers-to-ALL-by-default patch, bug #1090966,
+# in upstream 0.64
+Patch1:         perl-ldap-0.40-LDAP.pm-set-SSL_cipher_list-to-correct-value.patch
+# Pass actual length to syswrite() instead of default 1500 B, bug #1104069,
+# CPAN RT#96203, in upstream 0.64
+Patch2:         perl-ldap-0.40-RT-96203-LDAP.pm-use-correct-length-for-syswrite.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildArch:      noarch
@@ -31,6 +40,9 @@ maintenance functions such as adding, deleting or modifying entries.
 
 %prep
 %setup -q -n perl-ldap-%{version}
+%patch0 -p1
+%patch1 -p1
+%patch2 -p1
 chmod -c 644 bin/* contrib/* lib/Net/LDAP/DSML.pm
 %{__perl} -pi -e 's|^#!/usr/local/bin/perl\b|#!%{__perl}|' contrib/*
 
@@ -73,6 +85,10 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Thu Nov 19 2015 Petr Pisar <ppisar@redhat.com> - 1:0.40-2
+- Do not set SSL ciphers at all by default (bug #1090966)
+- Pass actual length to syswrite() instead of default 1500 B (bug #1104069)
+
 * Mon Jun  7 2010 Marcela Mašláňová <mmaslano@redhat.com> - 1:0.40-1
 - update to 0.40, add recommended requires
 - Resolves: rhbz#594771
