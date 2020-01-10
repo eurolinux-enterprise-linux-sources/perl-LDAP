@@ -1,0 +1,9 @@
+Makefile
+*blib
+_test
+temp
+*.bak
+.*.swp
+my.cfg
+MANIFEST
+SIGNATURE
