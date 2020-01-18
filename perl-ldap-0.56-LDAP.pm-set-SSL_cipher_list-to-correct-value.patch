@@ -1,0 +1,34 @@
+From ce1c5f1d136c637544a434323ddb5afc27b29449 Mon Sep 17 00:00:00 2001
+From: Peter Marschall <peter@adpm.de>
+Date: Tue, 17 Jun 2014 19:32:28 +0200
+Subject: [PATCH 2/2] LDAP.pm: set SSL_cipher_list to correct value
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Fix commit 11fe2a9 which contains a superfluous defined and thus
+set SSL_cipher_list to true instead of the value of the ciphers arg.
+
+Thanks to THOMAS GUEVIN <THOMAS.GUEVIN@adtran.com> for reporting the bug.
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ lib/Net/LDAP.pm | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/lib/Net/LDAP.pm b/lib/Net/LDAP.pm
+index 99d227a..2f873ad 100644
+--- a/lib/Net/LDAP.pm
++++ b/lib/Net/LDAP.pm
+@@ -244,7 +244,7 @@ sub _SSL_context_init_args {
+ 
+   (
+     defined $arg->{ciphers} ?
+-        ( SSL_cipher_list     => defined $arg->{ciphers}) : (),
++      ( SSL_cipher_list => $arg->{ciphers} ) : (),
+     SSL_ca_file         => exists  $arg->{cafile}  ? $arg->{cafile}  : '',
+     SSL_ca_path         => exists  $arg->{capath}  ? $arg->{capath}  : '',
+     SSL_key_file        => $clientcert ? $clientkey : undef,
+-- 
+1.9.3
+

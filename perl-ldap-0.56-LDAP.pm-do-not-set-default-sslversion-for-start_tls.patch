@@ -1,0 +1,55 @@
+From 0edc4099455173649bf23ce25c20679c198287f7 Mon Sep 17 00:00:00 2001
+From: Peter Marschall <peter@adpm.de>
+Date: Thu, 2 Apr 2015 14:20:50 +0200
+Subject: [PATCH] LDAP.pm: do not set default sslversion for start_tls
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Instead of setting a default sslversion for start_tls, rely on the default
+value used by IO::Socket::SSL.
+In addition, extend documentation slightly.
+
+Petr Písař: Ported to 0.56.
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ lib/Net/LDAP.pm  | 1 -
+ lib/Net/LDAP.pod | 8 +++++---
+ 2 files changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/lib/Net/LDAP.pm b/lib/Net/LDAP.pm
+index 5969785..afa3620 100644
+--- a/lib/Net/LDAP.pm
++++ b/lib/Net/LDAP.pm
+@@ -1079,7 +1079,6 @@ sub start_tls {
+ 
+   delete $ldap->{net_ldap_root_dse};
+ 
+-  $arg->{sslversion} = 'tlsv1'  unless defined $arg->{sslversion};
+   $arg->{sslserver} = $ldap->{net_ldap_host}  unless defined $arg->{sslserver};
+ 
+   my $sock_class = ref($sock);
+diff --git a/lib/Net/LDAP.pod b/lib/Net/LDAP.pod
+index 06bab70..c819e24 100644
+--- a/lib/Net/LDAP.pod
++++ b/lib/Net/LDAP.pod
+@@ -770,10 +770,12 @@ The server must provide a certificate, and it must be valid.
+ If you set verify to optional or require, you must also set either
+ cafile or capath. The most secure option is B<require>.
+ 
+-=item sslversion =E<gt> 'sslv2' | 'sslv3' | 'sslv23' | 'tlsv1'
++=item sslversion =E<gt> 'sslv2' | 'sslv3' | 'sslv23' | 'tlsv1' | 'tlsv1_1' | 'tlsv1_2'
+ 
+-This defines the version of the SSL/TLS protocol to use. Defaults to
+-B<'tlsv1'>.
++This defines the version of the SSL/TLS protocol to use.
++Default is to use the value that L<IO::Socket::SSL> uses as default.
++
++See L<IO::Socket::SSL/SSL_version> for more details.
+ 
+ =item ciphers =E<gt> CIPHERS
+ 
+-- 
+2.13.6
+

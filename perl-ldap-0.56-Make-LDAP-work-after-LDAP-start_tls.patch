@@ -1,0 +1,44 @@
+From be16775bdacfe19ee0af38bd157272e137581640 Mon Sep 17 00:00:00 2001
+From: Peter Marschall <peter@adpm.de>
+Date: Sat, 14 Dec 2013 15:17:46 +0100
+Subject: [PATCH] RT#90459: LDAP.pm: make LDAPS work after LDAP+start_tls
+
+Stop setting global SSL settings via IO::Socket::SSL::context_init()
+in Net::LDAP::start_tls().
+According to Steffen Ullrich, the IO::Socket::SSL maintainer, setting
+the global SSL settings is not necessary.
+
+While looking at it, Steffen found that connect_ldaps() does not make sure
+the 'sslserver' argument is set to allow checking for the correct host name.
+Fix this as well.
+
+Thanks to Klara Mall for reporting the bug and to Steffen Ullrich for
+the patch ideas.
+---
+ lib/Net/LDAP.pm | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/lib/Net/LDAP.pm b/lib/Net/LDAP.pm
+index 7ddd26a..2ee6898 100644
+--- a/lib/Net/LDAP.pm
++++ b/lib/Net/LDAP.pm
+@@ -186,6 +186,8 @@ sub connect_ldaps {
+   # separate port from host overwriting given/default port
+   $host =~ s/^([^:]+|\[.*\]):(\d+)$/$1/ and $port = $2;
+ 
++  $arg->{sslserver} = $host  unless defined $arg->{sslserver};
++
+   $ldap->{net_ldap_socket} = IO::Socket::SSL->new(
+     PeerAddr 	    => $host,
+     PeerPort 	    => $port,
+@@ -1080,7 +1082,6 @@ sub start_tls {
+   $arg->{sslversion} = 'tlsv1'  unless defined $arg->{sslversion};
+   $arg->{sslserver} = $ldap->{net_ldap_host}  unless defined $arg->{sslserver};
+ 
+-  IO::Socket::SSL::context_init( { _SSL_context_init_args($arg) } );
+   my $sock_class = ref($sock);
+ 
+   return $mesg
+-- 
+2.1.0
+

@@ -1,0 +1,40 @@
+From 93a1f2fd26cfef95c22530be07ca0e211f7e44d0 Mon Sep 17 00:00:00 2001
+From: Peter Marschall <peter@adpm.de>
+Date: Sat, 7 Jun 2014 15:38:36 +0200
+Subject: [PATCH] RT#96203: LDAP.pm: use correct length for syswrite
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Use correct length of bytes to write with syswrite() instead of default 15000
+in _sendmesg().
+
+According to the bug reporter, it may cause error in case that the function
+WRITE was redefined (e.g. Authen-SASL RT#85294) and did not handle this case
+properly.
+
+It should not change anything in Net::LDAP but help other modules not covering
+all WRITE cases.
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ lib/Net/LDAP.pm | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/lib/Net/LDAP.pm b/lib/Net/LDAP.pm
+index 2f873ad..6505276 100644
+--- a/lib/Net/LDAP.pm
++++ b/lib/Net/LDAP.pm
+@@ -842,7 +842,8 @@ sub _sendmesg {
+   my $to_send = \( $mesg->pdu );
+   my $offset = 0;
+   while ($offset < length($$to_send)) {
+-    my $n = syswrite($socket, substr($$to_send, $offset, 15000), 15000)
++    my $s = substr($$to_send, $offset, 15000);
++    my $n = syswrite($socket, $s, length($s))
+       or return _error($ldap, $mesg, LDAP_LOCAL_ERROR, "$!");
+     $offset += $n;
+   }
+-- 
+1.9.3
+
