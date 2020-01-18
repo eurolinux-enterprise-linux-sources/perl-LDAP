@@ -1,25 +1,12 @@
 Name:           perl-LDAP
 Version:        0.56
-Release:        5%{?dist}
+Release:        1.1%{?dist}
 Epoch:          1
 Summary:        LDAP Perl module
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 URL:            http://search.cpan.org/dist/perl-ldap/
 Source0:        http://www.cpan.org/authors/id/M/MA/MARSCHAP/perl-ldap-%{version}.tar.gz
-# Do not set SSL ciphers at all by default, bug #1091316, CPAN RT#95001,
-# in upstream 0.63
-Patch0:         perl-ldap-0.56-Do-not-set-SSL_ciphers-to-ALL-by-default.patch
-# Correct Do-not-set-SSL_ciphers-to-ALL-by-default patch, bug #1091316,
-# in upstream 0.64
-Patch1:         perl-ldap-0.56-LDAP.pm-set-SSL_cipher_list-to-correct-value.patch
-# Pass actual length to syswrite() instead of default 1500 B, bug #1104243,
-# CPAN RT#96203, in upstream 0.64
-Patch2:         perl-ldap-0.56-RT-96203-LDAP.pm-use-correct-length-for-syswrite.patch
-# Make LDAPS work after LDAP+start_tls, bug #1210032
-Patch3:         perl-ldap-0.56-Make-LDAP-work-after-LDAP-start_tls.patch
-# Fix typo in man pages, bug #1286921
-Patch4:         perl-ldap-0.56-Fix-typos-in-man-pages.patch
 BuildArch:      noarch
 BuildRequires:  perl
 BuildRequires:  perl(inc::Module::Install)
@@ -81,11 +68,6 @@ maintenance functions such as adding, deleting or modifying entries.
 
 %prep
 %setup -q -n perl-ldap-%{version}
-%patch0 -p1
-%patch1 -p1
-%patch2 -p1
-%patch3 -p1
-%patch4 -p1
 chmod -c 644 bin/* contrib/* lib/Net/LDAP/DSML.pm
 perl -pi -e 's|^#!/usr/local/bin/perl\b|#!%{__perl}|' contrib/*
 # Remove bundled libraries
@@ -114,20 +96,6 @@ make test
 %{_mandir}/man3/*.3pm*
 
 %changelog
-* Mon Mar 07 2016 Jitka Plesnikova <jplesnik@redhat.com> - 1:0.56-5
-- Update patch to cleanup patch leftover
-
-* Fri Mar 04 2016 Jitka Plesnikova <jplesnik@redhat.com> - 1:0.56-4
-- Make LDAPS work after LDAP+start_tls (bug #1210032)
-- Fix typo in man pages (bug #1286921)
-
-* Wed Aug 06 2014 Petr Pisar <ppisar@redhat.com> - 1:0.56-3
-- Do not set SSL ciphers at all by default (bug #1091316)
-- Pass actual length to syswrite() instead of default 1500 B (bug #1104243)
-
-* Fri Dec 27 2013 Daniel Mach <dmach@redhat.com> - 1:0.56-2
-- Mass rebuild 2013-12-27
-
 * Wed Aug 07 2013 Petr Šabata <contyk@redhat.com> - 1:0.56-1.1
 - Add a few missing BRs
 
