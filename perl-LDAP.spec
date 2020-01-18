@@ -1,6 +1,6 @@
 Name:           perl-LDAP
 Version:        0.56
-Release:        1.1%{?dist}
+Release:        2%{?dist}
 Epoch:          1
 Summary:        LDAP Perl module
 Group:          Development/Libraries
@@ -96,6 +96,9 @@ make test
 %{_mandir}/man3/*.3pm*
 
 %changelog
+* Fri Dec 27 2013 Daniel Mach <dmach@redhat.com> - 1:0.56-2
+- Mass rebuild 2013-12-27
+
 * Wed Aug 07 2013 Petr Šabata <contyk@redhat.com> - 1:0.56-1.1
 - Add a few missing BRs
 
