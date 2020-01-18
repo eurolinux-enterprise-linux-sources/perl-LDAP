@@ -1,6 +1,6 @@
 Name:           perl-LDAP
 Version:        0.56
-Release:        6%{?dist}
+Release:        3%{?dist}
 Epoch:          1
 Summary:        LDAP Perl module
 Group:          Development/Libraries
@@ -16,14 +16,6 @@ Patch1:         perl-ldap-0.56-LDAP.pm-set-SSL_cipher_list-to-correct-value.patc
 # Pass actual length to syswrite() instead of default 1500 B, bug #1104243,
 # CPAN RT#96203, in upstream 0.64
 Patch2:         perl-ldap-0.56-RT-96203-LDAP.pm-use-correct-length-for-syswrite.patch
-# Make LDAPS work after LDAP+start_tls, bug #1210032
-Patch3:         perl-ldap-0.56-Make-LDAP-work-after-LDAP-start_tls.patch
-# Fix typo in man pages, bug #1286921
-Patch4:         perl-ldap-0.56-Fix-typos-in-man-pages.patch
-# 1/2 Do not set default SSL version, bug #1520364, fixed in 0.65
-Patch5:         perl-ldap-0.56-LDAP.pm-do-not-set-default-sslversion-for-LDAPS.patch
-# 2/2 Do not set default SSL version, bug #1520364, fixed in 0.65
-Patch6:         perl-ldap-0.56-LDAP.pm-do-not-set-default-sslversion-for-start_tls.patch
 BuildArch:      noarch
 BuildRequires:  perl
 BuildRequires:  perl(inc::Module::Install)
@@ -88,10 +80,6 @@ maintenance functions such as adding, deleting or modifying entries.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
-%patch3 -p1
-%patch4 -p1
-%patch5 -p1
-%patch6 -p1
 chmod -c 644 bin/* contrib/* lib/Net/LDAP/DSML.pm
 perl -pi -e 's|^#!/usr/local/bin/perl\b|#!%{__perl}|' contrib/*
 # Remove bundled libraries
@@ -120,16 +108,6 @@ make test
 %{_mandir}/man3/*.3pm*
 
 %changelog
-* Mon Dec 04 2017 Petr Pisar <ppisar@redhat.com> - 1:0.56-6
-- Do not set default SSL version (bug #1520364)
-
-* Mon Mar 07 2016 Jitka Plesnikova <jplesnik@redhat.com> - 1:0.56-5
-- Update patch to cleanup patch leftover
-
-* Fri Mar 04 2016 Jitka Plesnikova <jplesnik@redhat.com> - 1:0.56-4
-- Make LDAPS work after LDAP+start_tls (bug #1210032)
-- Fix typo in man pages (bug #1286921)
-
 * Wed Aug 06 2014 Petr Pisar <ppisar@redhat.com> - 1:0.56-3
 - Do not set SSL ciphers at all by default (bug #1091316)
 - Pass actual length to syswrite() instead of default 1500 B (bug #1104243)
